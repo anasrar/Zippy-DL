@@ -1,0 +1,25 @@
+{
+  "name": "zippydl",
+  "version": "1.0.0",
+  "description": "Just Simple Zippyshare Downloader Using Node.js CLI",
+  "main": "app.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git"
+  },
+  "keywords": [
+    "zippyshare",
+    "cli",
+    "downloader"
+  ],
+  "author": "Anas RAR",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "cli-progress": "^2.1.1"
+  }
+}
