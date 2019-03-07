@@ -2,7 +2,13 @@
 
 Node.js Zippyshare Downloader CLI
 
-### Installing
+# Install Via NPM
+
+```
+$ npm install zippydl -g
+```
+
+# Install Via Github
 
 Clone This Repository
 
@@ -22,15 +28,30 @@ $ cd Zippy-DL
 $ npm install
 ```
 
-### How To Use
+# How To Use
 
-Get List Anime From Homepage
+Basic Use (Install Via Github)
 ```
 $ npm app.js <url>
+```
+Install Global
+```
+$ zippydl <url>
 ```
 
 ![DEMO](DEMO.gif)
 
-## License
+
+# Changelog
+## 1.0.4 - 03/03/2019
+### Update
+- Issues Get Name File Name
+- Add To NPM
+
+## 1.0.0 - 01/03/2019
+### Other
+- Successful Tested
+
+# License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

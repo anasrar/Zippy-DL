@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const _proggers = require('cli-progress'),
       _colors = require('colors'),
       _fs = require('fs'),
@@ -6,8 +8,11 @@ const _proggers = require('cli-progress'),
       _https = require('https');
 
 const stringit = () => {
+    console.log(process.argv);
     console.log(_colors.bgBlue('  FORMAT COMMAND  '));
-    console.log('node app.js <URL ZIPPYSHARE '+_colors.bgMagenta(' ex:xxx.zippyshare.com/d/xxxx/xxxx/xxxx ')+'>')
+    console.log('node app.js <URL ZIPPYSHARE '+_colors.bgMagenta(' ex:xxx.zippyshare.com/d/xxxx/xxxx/xxxx ')+'>');
+    console.log(_colors.bgGreen('  OR  '));
+    console.log('zippydl <URL ZIPPYSHARE '+_colors.bgMagenta(' ex:xxx.zippyshare.com/d/xxxx/xxxx/xxxx ')+'>')
 }
 
 const clacSize = (a,b) => {
@@ -24,58 +29,8 @@ const isURL = (a) => {
     return a.length < 2083 && url.test(a);
 }
 
-const DLfunc = (u) => {
-    const req = _https.get(u);
-
-    console.log('⏳  '+_colors.yellow('Waiting Server Response...'));
-    req.on('response', (res) => {
-        console.log('✅  '+_colors.green('Server Response'));
-        
-        let size = parseInt(res.headers['content-length'], 10),
-           currentSize = 0,
-           filename = decodeURIComponent(res.headers['content-disposition'].match(/filename\*?=['"]?(?:UTF-\d['"]*)?([^;\r\n"']*)['"]?;?/)[1]);
-
-        console.log('☕  '+_colors.yellow('Start Downloading File : '+filename));
-
-        const file = _fs.createWriteStream(filename);
-        res.pipe(file)
-
-        const loadbar = new _proggers.Bar({
-            format: 'Downloading '+ _colors.green('{bar}') +' {percentage}% | {current}/{size} | ETA: {eta}s | Speed: {speed}'
-        }, _proggers.Presets.shades_classic);
-        loadbar.start(size, 0, {
-            size: clacSize(size, 3),
-            current: clacSize(currentSize, 3)
-        });
-
-        res.on('data', (c) => {
-            currentSize += c.length;
-            loadbar.increment(c.length, {
-                speed: clacSize(c.length, 3),
-                current: clacSize(currentSize, 3)
-            });
-        });
-        res.on('end', () => {
-            loadbar.stop();
-            file.close();
-            console.log('✅  '+_colors.green('Success Download File : '+filename));
-        });
-        res.on('error', () => {
-            _fs.unlink(filename);
-        })
-    })
-}
-
-const arg = process.argv[2];
-
-if(arg === undefined){
-    stringit()
-} else if (arg.length && !isURL(arg)) {
-    console.log(_colors.bgYellow.black('  Please Insert Valid URL  '));
-    stringit()
-} else if (arg.length && isURL(arg)) {
-    console.log('⏳  '+_colors.yellow('Get Download Page...'));
-    const zippy = _https.get(arg);
+const GetLinkFunc = (u) => {
+    const zippy = _https.get(u);
 
     zippy.on('response', (res) => {
         console.log('👌  '+_colors.green('Done'));
@@ -98,4 +53,64 @@ if(arg === undefined){
             DLfunc(dlurl);
         });
     });
+}
+
+const DLfunc = (u) => {
+    const req = _https.get(u);
+
+    console.log('⏳  '+_colors.yellow('Waiting Server Response...'));
+    req.on('response', (res) => {
+
+        if(!res.headers['content-disposition']){
+            console.log('🔁  '+_colors.yellow('Server Download Error, Try To Get New Link...'));
+            GetLinkFunc(arg)
+        } else {
+            console.log('✅  '+_colors.green('Server Response'));
+
+            let size = parseInt(res.headers['content-length'], 10),
+            currentSize = 0,
+            filename = decodeURIComponent(res.headers['content-disposition'].match(/filename\*?=['"]?(?:UTF-\d['"]*)?([^;\r\n"']*)['"]?;?/)[1]);
+
+            console.log('☕  '+_colors.yellow('Start Downloading File : '+filename));
+
+            const file = _fs.createWriteStream(filename);
+            res.pipe(file)
+
+            const loadbar = new _proggers.Bar({
+                format: 'Downloading '+ _colors.green('{bar}') +' {percentage}% | {current}/{size} | ETA: {eta}s | Speed: {speed}'
+            }, _proggers.Presets.shades_classic);
+            loadbar.start(size, 0, {
+                size: clacSize(size, 3),
+                current: clacSize(currentSize, 3)
+            });
+
+            res.on('data', (c) => {
+                currentSize += c.length;
+                loadbar.increment(c.length, {
+                    speed: clacSize(c.length, 3),
+                    current: clacSize(currentSize, 3)
+                });
+            });
+            res.on('end', () => {
+                loadbar.stop();
+                file.close();
+                console.log('✅  '+_colors.green('Success Download File : '+filename));
+            });
+            res.on('error', () => {
+                _fs.unlink(filename);
+            })
+        }
+    })
+}
+
+const arg = process.argv[2];
+
+if(arg === undefined){
+    stringit()
+} else if (arg.length && !isURL(arg)) {
+    console.log(_colors.bgYellow.black('  Please Insert Valid URL  '));
+    stringit()
+} else if (arg.length && isURL(arg)) {
+    console.log('⏳  '+_colors.yellow('Get Download Page...'));
+    GetLinkFunc(arg)
 }
