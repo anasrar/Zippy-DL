@@ -67,7 +67,7 @@ const DLfunc = (u, cb) => {
 
         if(!res.headers['content-disposition']){
             console.log('🔁  '+_colors.yellow('Server Download Error, Try To Get New Link...'));
-            GetLinkFunc(arg)
+            GetLinkFunc(u, cb)
         } else {
             console.log('✅  '+_colors.green('Server Response'));
 
