@@ -5,14 +5,18 @@ const _proggers = require('cli-progress'),
       _fs = require('fs'),
       _$ = require('cheerio'),
       _url = require('url'),
-      _https = require('https');
+      _https = require('https'),
+      _async = require('async');
 
 const stringit = () => {
-    console.log(process.argv);
-    console.log(_colors.bgBlue('  FORMAT COMMAND  '));
-    console.log('node app.js <URL ZIPPYSHARE '+_colors.bgMagenta(' ex:xxx.zippyshare.com/d/xxxx/xxxx/xxxx ')+'>');
-    console.log(_colors.bgGreen('  OR  '));
-    console.log('zippydl <URL ZIPPYSHARE '+_colors.bgMagenta(' ex:xxx.zippyshare.com/d/xxxx/xxxx/xxxx ')+'>')
+    console.log(''+_colors.bgBlue('  FORMAT COMMAND  ')+`
+
+`+_colors.bgGreen('  Download  ')+`
+    zippydl <URL ZIPPYSHARE `+_colors.bgMagenta(' ex:xxx.zippyshare.com/d/xxxx/xxxx/xxxx ')+`>
+`+_colors.bgGreen('  Download Batch  ')+`
+    zippydl (-b | --batch) <list url file.txt>
+`+_colors.bgGreen('  Check Version  ')+`
+    zippydl (-v | --version)`);
 }
 
 const clacSize = (a,b) => {
@@ -29,7 +33,7 @@ const isURL = (a) => {
     return a.length < 2083 && url.test(a);
 }
 
-const GetLinkFunc = (u) => {
+const GetLinkFunc = (u, cb) => {
     const zippy = _https.get(u);
 
     zippy.on('response', (res) => {
@@ -42,20 +46,20 @@ const GetLinkFunc = (u) => {
         });
         res.on('end', () => {
             let $ = _$.load(body),
-                url = _url.parse($('#video').attr('poster'), true),
-                urlori = _url.parse(arg),
+                url = _url.parse($('.flagen').attr('href'), true),
+                urlori = _url.parse(u),
                 key = url.query['key'],
-                time = parseInt(url.query['time']),
+                time = parseInt(/var a = ([0-9]+);$/gm.exec($('#dlbutton').next().html())[1]),
                 dlurl = urlori.protocol+'//'+urlori.hostname+'/d/'+key+'/'+(Math.floor(time/3) + time)+'/DOWNLOAD';
 
             console.log('👌  '+_colors.green('Done'));
             console.log('🎁  '+_colors.yellow('Start Download From URL : '+dlurl));
-            DLfunc(dlurl);
+            DLfunc(dlurl, cb);
         });
     });
 }
 
-const DLfunc = (u) => {
+const DLfunc = (u, cb) => {
     const req = _https.get(u);
 
     console.log('⏳  '+_colors.yellow('Waiting Server Response...'));
@@ -95,9 +99,11 @@ const DLfunc = (u) => {
                 loadbar.stop();
                 file.close();
                 console.log('✅  '+_colors.green('Success Download File : '+filename));
+                cb()
             });
             res.on('error', () => {
                 _fs.unlink(filename);
+                cb()
             })
         }
     })
@@ -107,10 +113,30 @@ const arg = process.argv[2];
 
 if(arg === undefined){
     stringit()
+} else if (arg.length && (arg === '-b' || arg === '--batch')) {
+    if(process.argv.length !== 4){
+        console.log(_colors.bgRed.white('  Please File Name  '));
+    } else if (!_fs.existsSync(process.argv[3])) {
+        console.log(_colors.bgRed.white(`  File ${process.argv[3]} Not Found  `));
+    } else if (process.argv.length === 4 && _fs.existsSync(process.argv[3])) {
+        let from = _fs.readFileSync(process.argv[3], 'utf8');
+        from = from.split(/\r\n|\r|\n/);
+
+        _async.eachSeries(from,
+            (a,b) => {
+                console.log('⏳  '+_colors.yellow(`Get Page From : ${a}`));
+                GetLinkFunc(a, b);
+            },
+            (err, res) => {
+                console.log(`Batch Download Done`)
+        })
+    }
+} else if (arg.length && (arg === '-v' || arg === '--version')) {
+    console.log(_colors.bgBlue.white('  Version : 1.2.7  '));
 } else if (arg.length && !isURL(arg)) {
-    console.log(_colors.bgYellow.black('  Please Insert Valid URL  '));
+    console.log(_colors.bgRed.white('  Please Insert Valid URL  '));
     stringit()
 } else if (arg.length && isURL(arg)) {
     console.log('⏳  '+_colors.yellow('Get Download Page...'));
-    GetLinkFunc(arg)
+    GetLinkFunc(arg, () => {})
 }
