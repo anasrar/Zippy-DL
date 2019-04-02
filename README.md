@@ -38,7 +38,11 @@ $ npm link
 
 ## Download File
 ```
-$ zippydl <url>
+$ zippydl -d <url>
+```
+## Download Batch Inline Command
+```
+$ zippydl -d https://zippyshare.com,https://zippyshare.com
 ```
 ## Download Batch File
 ```
@@ -51,6 +55,10 @@ https://xxx.zippyshare.com/v/xxxx/file.html
 https://xxx.zippyshare.com/v/xxxx/file.html
 https://xxx.zippyshare.com/v/xxxx/file.html
 ```
+## Show Help
+```
+$ zippydl -h
+```
 
 # Demo
 
@@ -58,6 +66,11 @@ https://xxx.zippyshare.com/v/xxxx/file.html
 
 
 # Changelog
+## 2.0.1 - 03/04/2019
+### Update
+- Add Batch Inline Comand
+- Fix Bugs Server Download Error
+
 ## 1.2.7 - 08/03/2019
 ### Update
 - Support All File

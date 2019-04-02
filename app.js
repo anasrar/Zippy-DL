@@ -1,23 +1,14 @@
 #!/usr/bin/env node
 
 const _proggers = require('cli-progress'),
+      _commander = require('commander'),
       _colors = require('colors'),
       _fs = require('fs'),
       _$ = require('cheerio'),
       _url = require('url'),
       _https = require('https'),
-      _async = require('async');
-
-const stringit = () => {
-    console.log(''+_colors.bgBlue('  FORMAT COMMAND  ')+`
-
-`+_colors.bgGreen('  Download  ')+`
-    zippydl <URL ZIPPYSHARE `+_colors.bgMagenta(' ex:xxx.zippyshare.com/d/xxxx/xxxx/xxxx ')+`>
-`+_colors.bgGreen('  Download Batch  ')+`
-    zippydl (-b | --batch) <list url file.txt>
-`+_colors.bgGreen('  Check Version  ')+`
-    zippydl (-v | --version)`);
-}
+      _async = require('async'),
+      _version = '2.0.1';
 
 const clacSize = (a,b) => {
     if(0==a)return "0 Bytes";
@@ -26,11 +17,6 @@ const clacSize = (a,b) => {
         e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],
         f=Math.floor(Math.log(a)/Math.log(c));
     return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]
-}
-const isURL = (a) => {
-    var urlRegex = '^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$';
-    var url = new RegExp(urlRegex, 'i');
-    return a.length < 2083 && url.test(a);
 }
 
 const GetLinkFunc = (u, cb) => {
@@ -54,12 +40,12 @@ const GetLinkFunc = (u, cb) => {
 
             console.log('👌  '+_colors.green('Done'));
             console.log('🎁  '+_colors.yellow('Start Download From URL : '+dlurl));
-            DLfunc(dlurl, cb);
+            DLfunc(dlurl, cb, u);
         });
     });
 }
 
-const DLfunc = (u, cb) => {
+const DLfunc = (u, cb, o) => {
     const req = _https.get(u);
 
     console.log('⏳  '+_colors.yellow('Waiting Server Response...'));
@@ -67,7 +53,7 @@ const DLfunc = (u, cb) => {
 
         if(!res.headers['content-disposition']){
             console.log('🔁  '+_colors.yellow('Server Download Error, Try To Get New Link...'));
-            GetLinkFunc(u, cb)
+            GetLinkFunc(o, cb)
         } else {
             console.log('✅  '+_colors.green('Server Response'));
 
@@ -109,34 +95,47 @@ const DLfunc = (u, cb) => {
     })
 }
 
-const arg = process.argv[2];
+_commander.version(`🔨  Version: ${_version}`, '-v, --version').usage('[options] <args>')
+_commander.option('-d, --download <URL>', 'Download From URL, Can Be Multiple URL With Comma (https://zippy...,https://zippy)', (a) => {
 
-if(arg === undefined){
-    stringit()
-} else if (arg.length && (arg === '-b' || arg === '--batch')) {
-    if(process.argv.length !== 4){
-        console.log(_colors.bgRed.white('  Please File Name  '));
-    } else if (!_fs.existsSync(process.argv[3])) {
-        console.log(_colors.bgRed.white(`  File ${process.argv[3]} Not Found  `));
-    } else if (process.argv.length === 4 && _fs.existsSync(process.argv[3])) {
-        let from = _fs.readFileSync(process.argv[3], 'utf8');
-        from = from.split(/\r\n|\r|\n/);
+    a = a.split(',')
 
-        _async.eachSeries(from,
+    if(a.length > 1){
+        _async.eachSeries(a,
             (a,b) => {
-                console.log('⏳  '+_colors.yellow(`Get Page From : ${a}`));
-                GetLinkFunc(a, b);
+                console.log('⏳  '+_colors.yellow(`Get Page From : ${a}`))
+                GetLinkFunc(a.trim(), b)
+            },
+            (err, res) => {
+                console.log(`Batch Download Done`)
+        })
+    } else {
+        console.log('⏳  '+_colors.yellow(`Get Page From : ${a[0]}`))
+        GetLinkFunc(a[0], () => {})
+    }
+})
+_commander.option('-b, --batch <FILE>', 'Get URL Download From File', (a) => {
+
+    if (!_fs.existsSync(a)) {
+        console.log(_colors.bgRed.white(`  File ${a} Not Found  `));
+    } else {
+        let file = _fs.readFileSync(a, 'utf8')
+        file = file.split(/\r\n|\r|\n/)
+
+        _async.eachSeries(file,
+            (a,b) => {
+                console.log('⏳  '+_colors.yellow(`Get Page From : ${a}`))
+                GetLinkFunc(a.trim(), b)
             },
             (err, res) => {
                 console.log(`Batch Download Done`)
         })
     }
-} else if (arg.length && (arg === '-v' || arg === '--version')) {
-    console.log(_colors.bgBlue.white('  Version : 1.2.7  '));
-} else if (arg.length && !isURL(arg)) {
-    console.log(_colors.bgRed.white('  Please Insert Valid URL  '));
-    stringit()
-} else if (arg.length && isURL(arg)) {
-    console.log('⏳  '+_colors.yellow('Get Download Page...'));
-    GetLinkFunc(arg, () => {})
+})
+
+_commander.parse(process.argv)
+
+if (!process.argv.slice(2).length) {
+    _commander.outputHelp()
+    return;
 }
