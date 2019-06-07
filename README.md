@@ -2,6 +2,11 @@
 
 Node.js Zippyshare Downloader CLI
 
+[![NPM](https://nodei.co/npm/zippydl.png?compact=true)](https://nodei.co/npm/zippydl/)
+
+![GitHub package.json version](https://img.shields.io/github/package-json/v/anasrar/Zippy-DL.svg) ![GitHub](https://img.shields.io/github/license/anasrar/Zippy-DL.svg)
+
+
 # Install Via NPM
 
 ```
@@ -42,7 +47,7 @@ $ zippydl -d <url>
 ```
 ## Download Batch Inline Command
 ```
-$ zippydl -d https://zippyshare.com,https://zippyshare.com
+$ zippydl -d "https://zippyshare.com,https://zippyshare.com"
 ```
 ## Download Batch File
 ```
@@ -66,6 +71,10 @@ $ zippydl -h
 
 
 # Changelog
+## 2.1.1 - 03/04/2019
+### Update
+- Nothing new, just clean up the code
+
 ## 2.0.1 - 03/04/2019
 ### Update
 - Add Batch Inline Comand
