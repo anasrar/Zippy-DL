@@ -29,8 +29,9 @@ exports.GetLink = async (u) => {
     const url = _url.parse($('.flagen').attr('href'), true)
     const urlori = _url.parse(u)
     const key = url.query['key']
-    const time = parseInt(/var a = ([0-9]+);$/gm.exec($('#dlbutton').next().html())[1])
-    const dlurl = urlori.protocol + '//' + urlori.hostname + '/d/' + key + '/' + (Math.floor(time / 3) + time) + '/DOWNLOAD'
+    const time = eval($('#dlbutton').next().html().match(/\(([0-9%+\s]+)\)/m)[0].replace(/\(?\)?/gm, ""))
+    const fileName = $('#dlbutton').next().html().match(/.+"\/(.+)";$/m)[0].split(' + "/')[1].replace('";',"")
+    const dlurl = urlori.protocol + '//' + urlori.hostname + '/d/' + key + '/' + time + '/' + fileName
     console.log('✅  ' + _colors.green('Done'))
     return dlurl
 }
