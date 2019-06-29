@@ -9,6 +9,7 @@ const _proggers = require('cli-progress'),
     _https = require('https'),
     _axios = require('axios'),
     _async = require('async'),
+    _math = require('mathjs'),
     _version = require('./package.json').version
 
 const clacSize = (a, b) => {
@@ -29,8 +30,8 @@ exports.GetLink = async (u) => {
     const url = _url.parse($('.flagen').attr('href'), true)
     const urlori = _url.parse(u)
     const key = url.query['key']
-    const time = parseInt(/var a = ([0-9]+);$/gm.exec($('#dlbutton').next().html())[1])
-    const dlurl = urlori.protocol + '//' + urlori.hostname + '/d/' + key + '/' + (Math.floor(time / 3) + time) + '/DOWNLOAD'
+    const time = _math.evaluate(/\(([\d\s\+\%]+?)\)/gm.exec($('#dlbutton').next().html())[1])
+    const dlurl = urlori.protocol + '//' + urlori.hostname + '/d/' + key + '/' + (time) + '/DOWNLOAD'
     console.log('✅  ' + _colors.green('Done'))
     return dlurl
 }

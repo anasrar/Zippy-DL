@@ -1,6 +1,6 @@
 {
   "name": "zippydl",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Just Simple Zippyshare Downloader Using Node.js CLI",
   "main": "app.js",
   "private": false,
@@ -24,7 +24,8 @@
     "cheerio": "^1.0.0-rc.2",
     "cli-progress": "^2.1.1",
     "colors": "^1.3.3",
-    "commander": "^2.19.0"
+    "commander": "^2.19.0",
+    "mathjs": "^6.0.2"
   },
   "preferGlobal": true,
   "bin": {
