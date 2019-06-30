@@ -1,6 +1,6 @@
 {
   "name": "zippydl",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Just Simple Zippyshare Downloader Using Node.js CLI",
   "main": "app.js",
   "private": false,

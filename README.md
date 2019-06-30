@@ -71,6 +71,15 @@ $ zippydl -h
 
 
 # Changelog
+
+## 2.1.3 - 01/07/2019
+### Update
+- Fix Old Structure Zippyshare Download Page
+
+## 2.1.2 - 30/06/2019
+### Update
+- Fix New Structure Zippyshare Download Page
+
 ## 2.1.1 - 03/04/2019
 ### Update
 - Nothing new, just clean up the code
