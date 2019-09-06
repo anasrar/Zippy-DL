@@ -72,6 +72,10 @@ $ zippydl -h
 
 # Changelog
 
+## 2.1.4 - 01/07/2019
+### Update
+- #4 Add error handle for file has expired and does not exist
+
 ## 2.1.3 - 01/07/2019
 ### Update
 - Fix Old Structure Zippyshare Download Page

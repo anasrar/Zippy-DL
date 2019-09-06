@@ -25,8 +25,11 @@ exports.GetLink = async (u) => {
     console.log('⏳  ' + _colors.yellow(`Get Page From : ${u}`))
     const zippy = await _axios({ method: 'GET', url: u }).then(res => res.data).catch(err => false)
     console.log('✅  ' + _colors.green('Done'))
-    console.log('⏳  ' + _colors.yellow('Fetch Link Download...'))
     const $ = _$.load(zippy)
+    if (!$('#dlbutton').length) {
+        return { error: true, message: $('#lrbox>div').first().text().trim() }
+    }
+    console.log('⏳  ' + _colors.yellow('Fetch Link Download...'))
     const url = _url.parse($('.flagen').attr('href'), true)
     const urlori = _url.parse(u)
     const key = url.query['key']
@@ -40,13 +43,17 @@ exports.GetLink = async (u) => {
         dlurl = urlori.protocol + '//' + urlori.hostname + '/d/' + key + '/' + (time) + '/DOWNLOAD'
     }
     console.log('✅  ' + _colors.green('Done'))
-    return dlurl
+    return { error: false, url: dlurl }
 }
 
 exports.DLFunc = async (u, cb = () => { }) => {
     const url = await exports.GetLink(u)
-    const req = await _https.get(url)
-    console.log('🎁  ' + _colors.yellow('Start Download From URL : ' + url))
+    if (url.error) {
+        console.log(_colors.bgRed(_colors.white(' ' + url.message + ' ')))
+        return null
+    }
+    const req = await _https.get(url.url)
+    console.log('🎁  ' + _colors.yellow('Start Download From URL : ' + url.url))
     console.log('⏳  ' + _colors.yellow('Waiting Server Response...'));
     await req.on('response', res => {
         if (!res.headers['content-disposition']) {
