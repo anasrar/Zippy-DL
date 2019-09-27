@@ -10,6 +10,7 @@ const _proggers = require('cli-progress'),
     _axios = require('axios'),
     _async = require('async'),
     _math = require('mathjs'),
+    _clipboard = require('clipboardy'),
     _version = require('./package.json').version
 
 const clacSize = (a, b) => {
@@ -104,6 +105,17 @@ _commander.option('-d, --download <URL>', 'Download From URL, Can Be Multiple UR
         _async.eachSeries(a, (a, b) => { exports.DLFunc(a.trim(), b) }, (err, res) => { console.log(`Batch Download Done`) })
     } else {
         exports.DLFunc(a[0], () => { })
+    }
+})
+_commander.option('-l, --link <URL>', 'Only Get URL Download File, For Now Only Support Single URL', async a => {
+    const res = await exports.GetLink(a)
+    if (res.error) {
+        console.log(_colors.bgRed(_colors.white(' ' + res.message + ' ')))
+        return null
+    } else {
+        console.log('🔥  ' + _colors.green('URL Download : ') + _colors.yellow(res.url))
+        _clipboard.writeSync(res.url)
+        console.log('📋  ' + _colors.green('URL Has Copy On Your Clipboard'))
     }
 })
 _commander.option('-b, --batch <FILE>', 'Get URL Download From File', (a) => {

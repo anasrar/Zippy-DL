@@ -60,6 +60,10 @@ https://xxx.zippyshare.com/v/xxxx/file.html
 https://xxx.zippyshare.com/v/xxxx/file.html
 https://xxx.zippyshare.com/v/xxxx/file.html
 ```
+## Get URL Download File
+```
+$ zippydl -l <url>
+```
 ## Show Help
 ```
 $ zippydl -h
@@ -72,9 +76,9 @@ $ zippydl -h
 
 # Changelog
 
-## 2.1.4 - 01/07/2019
+## 2.2.0 - 09/27/2019
 ### Update
-- #4 Add error handle for file has expired and does not exist
+- anasrar/Zippy-DL#5 adding new command for get only url file without download
 
 ## 2.1.3 - 01/07/2019
 ### Update
