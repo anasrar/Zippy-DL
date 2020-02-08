@@ -76,9 +76,17 @@ $ zippydl -h
 
 # Changelog
 
+## 2.2.1 - 02/08/202
+### Update
+- update how to calculate url download
+
 ## 2.2.0 - 09/27/2019
 ### Update
 - anasrar/Zippy-DL#5 adding new command for get only url file without download
+
+## 2.1.4 - 01/07/2019
+### Update
+- #4 Add error handle for file has expired and does not exist
 
 ## 2.1.3 - 01/07/2019
 ### Update

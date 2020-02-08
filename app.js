@@ -37,8 +37,8 @@ exports.GetLink = async (u) => {
     let time;
     let dlurl;
     try {
-        time = parseInt(/var a = ([0-9]+);$/gm.exec($('#dlbutton').next().html())[1])
-        dlurl = urlori.protocol + '//' + urlori.hostname + '/d/' + key + '/' + (Math.floor(time / 3) + time) + '/DOWNLOAD'
+        time = /([0-9]+)\%([0-9]+);$/gm.exec($('#dlbutton').next().html())[1]
+        dlurl = urlori.protocol + '//' + urlori.hostname + '/d/' + key + '/' + ((time % 900) * (time % 53) + 8 + (time % 13)) + '/DOWNLOAD'
     } catch (error) {
         time = _math.evaluate(/\(([\d\s\+\%]+?)\)/gm.exec($('#dlbutton').next().html())[1])
         dlurl = urlori.protocol + '//' + urlori.hostname + '/d/' + key + '/' + (time) + '/DOWNLOAD'
