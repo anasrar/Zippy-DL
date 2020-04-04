@@ -40,7 +40,7 @@ exports.GetLink = async (u) => {
         time = /var b = ([0-9]+);$/gm.exec($('#dlbutton').next().html())[1]
         dlurl = urlori.protocol + '//' + urlori.hostname + '/d/' + key + '/' + (2 + 2 * 2 + parseInt(time)) + '3/DOWNLOAD'
     } catch (error) {
-        time = _math.evaluate(/\(([\d\s\+\%]+?)\)/gm.exec($('#dlbutton').next().html())[1])
+        time = _math.evaluate(/ \+ \((.*)\) \+ /gm.exec($('#dlbutton').next().html())[1])
         dlurl = urlori.protocol + '//' + urlori.hostname + '/d/' + key + '/' + (time) + '/DOWNLOAD'
     }
     console.log('✅  ' + _colors.green('Done'))

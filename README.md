@@ -76,11 +76,15 @@ $ zippydl -h
 
 # Changelog
 
-## 2.2.2 - 02/20/202
+## 2.2.3 - 04/05/2020
 ### Update
 - same as 2.2.1
 
-## 2.2.1 - 02/08/202
+## 2.2.2 - 02/20/2020
+### Update
+- same as 2.2.1
+
+## 2.2.1 - 02/08/2020
 ### Update
 - update how to calculate url download
 
